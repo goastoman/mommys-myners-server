@@ -1,0 +1,36 @@
+version: "2"
+
+services:
+  # web:
+  #   build: ./web
+  #   volumes:
+  #     - ./web:/opt/web
+  #   ports:
+  #     - 8100:3000
+  #   depends_on:
+  #     - server
+  #   restart: unless-stopped
+  #   command: bash -c "npm install -y && npm run dev"
+
+  server:
+    image: amrbz/mm_server
+    ports:
+      - 8220:80
+    depends_on:
+      - crate
+    restart: always
+    tty: true
+    stdin_open: true
+
+  crate:
+    image: crate
+    ports:
+      - 4200:4200
+      - 4300:4300
+    environment:
+      CRATE_HEAP_SIZE: 1g
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+    volumes:
+      - /mnt/data/crate/mommys_miners:/data
+    command: crate -Cnetwork.host=_site_
+    restart: always
